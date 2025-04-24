@@ -62,6 +62,7 @@ async function buscarNoReddit(tag) {
         }
       }
     );
+
     return response.data.data.children
       .filter(post => post.data.ups >= 100)
       .map(post => ({
@@ -71,7 +72,9 @@ async function buscarNoReddit(tag) {
         link: `https://reddit.com${post.data.permalink}`,
         upvotes: post.data.ups
       }));
+
   } catch (error) {
+    console.error("Erro no Reddit:", error.message);
     return [{ fonte: 'reddit', tag, erro: 'Erro ao buscar no Reddit' }];
   }
 }
