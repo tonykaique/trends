@@ -51,14 +51,37 @@ async function buscarNoYouTube(tag) {
 }
 
 // Buscar posts no Reddit com +100 upvotes
+// Função para autenticar no Reddit com OAuth2
+async function autenticarReddit() {
+  const auth = Buffer.from("KxUq00DmZI4nksgB1uTSfw:0vfoFQWuYTOz-hGCHUKR7vuVOCmBUA").toString('base64');
+
+  const response = await axios.post('https://www.reddit.com/api/v1/access_token',
+    new URLSearchParams({
+      grant_type: 'client_credentials'
+    }),
+    {
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'ZimoBot/1.0 by Fit-Bend2298'
+      }
+    }
+  );
+
+  return response.data.access_token;
+}
+
+// Função para buscar posts no Reddit com autenticação
 async function buscarNoReddit(tag) {
   try {
-    const tagLimpa = tag.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const token = await autenticarReddit();
+    const tagLimpa = tag.normalize("NFD").replace(/[̀-ͯ]/g, "");
     const response = await axios.get(
-      `https://www.reddit.com/search.json?q=${encodeURIComponent(tagLimpa)}&limit=5`,
+      `https://oauth.reddit.com/search?q=${encodeURIComponent(tagLimpa)}&limit=5`,
       {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; TonyBot/1.0)'
+          'Authorization': `Bearer ${token}`,
+          'User-Agent': 'ZimoBot/1.0 by Fit-Bend2298'
         }
       }
     );
@@ -74,15 +97,14 @@ async function buscarNoReddit(tag) {
       }));
 
   } catch (error) {
-  console.error("ERRO REAL REDDIT:", {
-    message: error.message,
-    code: error.code,
-    status: error.response?.status,
-    data: error.response?.data?.message || error.response?.data
-  });
+    console.error("ERRO AUTENTICADO REDDIT:", {
+      status: error.response?.status,
+      message: error.message,
+      data: error.response?.data
+    });
 
-  return [{ fonte: 'reddit', tag, erro: 'Erro ao buscar no Reddit' }];
-}
+    return [{ fonte: 'reddit', tag, erro: 'Erro ao buscar no Reddit (autenticado)' }];
+  }
 }
 
 app.get('/trends', async (req, res) => {
