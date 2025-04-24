@@ -47,3 +47,7 @@ app.get('/trends', async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor de trends rodando em http://localhost:${port}/trends`)
 })
+
+import cors from 'cors'
+const app = express()
+app.use(cors())
