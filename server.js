@@ -2,6 +2,8 @@ import express from 'express';
 import axios from 'axios';
 
 const app = express();
+import cors from 'cors';
+app.use(cors());
 const port = 3000;
 
 // Substitua pela sua chave da API do YouTube
