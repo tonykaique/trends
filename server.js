@@ -74,9 +74,15 @@ async function buscarNoReddit(tag) {
       }));
 
   } catch (error) {
-    console.error("Erro no Reddit:", error.message);
-    return [{ fonte: 'reddit', tag, erro: 'Erro ao buscar no Reddit' }];
-  }
+  console.error("ERRO REAL REDDIT:", {
+    message: error.message,
+    code: error.code,
+    status: error.response?.status,
+    data: error.response?.data?.message || error.response?.data
+  });
+
+  return [{ fonte: 'reddit', tag, erro: 'Erro ao buscar no Reddit' }];
+}
 }
 
 app.get('/trends', async (req, res) => {
