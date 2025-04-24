@@ -53,7 +53,15 @@ async function buscarNoYouTube(tag) {
 // Buscar posts no Reddit com +100 upvotes
 async function buscarNoReddit(tag) {
   try {
-    const response = await axios.get(`https://www.reddit.com/search.json?q=${encodeURIComponent(tag)}&limit=5`);
+    const tagLimpa = tag.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const response = await axios.get(
+      `https://www.reddit.com/search.json?q=${encodeURIComponent(tagLimpa)}&limit=5`,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; TonyBot/1.0)'
+        }
+      }
+    );
     return response.data.data.children
       .filter(post => post.data.ups >= 100)
       .map(post => ({
