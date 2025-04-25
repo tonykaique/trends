@@ -1,9 +1,9 @@
 import axios from 'axios';
 import cors from 'cors';
+import express from 'express';
+import https from 'https';
+import fs from 'fs';
 
-const express = require('express');
-const https = require('https');
-const fs = require('fs');
 const app = express();
 app.use(cors());
 
@@ -11,7 +11,6 @@ const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/fullchain.pem')
 };
-
 
 // ================================================================
 // !!! ATENÇÃO: Chaves Hardcoded - INSEGURO !!!
