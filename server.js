@@ -164,9 +164,17 @@ app.get('/trends', async (req, res) => {
   }
 });
 
-// --- Iniciar Servidor ---
-app.listen(port, '0.0.0.0', () => {
-  console.log(`[Server] Servidor /trends rodando em http://0.0.0.0:${port}`);
-  console.log(`[Server] ATENÇÃO: Usando chaves de API/Credenciais diretamente no código!`);
+const https = require('https');
+const fs = require('fs');
+const express = require('express');
+const app = express();
+
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/fullchain.pem')
+};
+
+https.createServer(options, app).listen(3000, () => {
+  console.log('Servidor rodando em HTTPS na porta 3000');
   autenticarReddit().catch(err => {/* Já logado */});
 });
