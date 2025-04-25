@@ -2,9 +2,17 @@ import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 
+const https = require('https');
+const fs = require('fs');
+const express = require('express');
 const app = express();
 app.use(cors());
-const port = 3000;
+
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/fullchain.pem')
+};
+
 
 // ================================================================
 // !!! ATENÇÃO: Chaves Hardcoded - INSEGURO !!!
@@ -164,15 +172,6 @@ app.get('/trends', async (req, res) => {
   }
 });
 
-const https = require('https');
-const fs = require('fs');
-const express = require('express');
-const app = express();
-
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/api.zimo.vc/fullchain.pem')
-};
 
 https.createServer(options, app).listen(3000, () => {
   console.log('Servidor rodando em HTTPS na porta 3000');
