@@ -54,13 +54,14 @@ async function buscarNoYouTube(tag) {
     console.log(`[Server] Aplicando filtro de views >= ${limiteViews}`);
 
     const resultadosFiltrados = videoItems
-      .filter(v => viewsMap[v.id.videoId] >= limiteViews) // <-- Usa o limite definido acima
+      .filter(v => viewsMap[v.id.videoId] >= limiteViews) // Usa o limite definido acima
       .map(video => ({
         fonte: 'youtube', tag,
         titulo: video.snippet.title,
         link: `https://www.youtube.com/watch?v=${video.id.videoId}`,
         canal: video.snippet.channelTitle,
-        views: viewsMap[video.id.videoId]
+        views: viewsMap[video.id.videoId],
+        dataPublicacao: video.snippet.publishedAt
       }));
 
     console.log(`[Server] YouTube: Encontrados ${resultadosFiltrados.length} vídeos para "${tag}" (APÓS filtro de views >= ${limiteViews}).`);
@@ -112,7 +113,7 @@ async function buscarNoReddit(tag) {
         if (!response.data?.data?.children) { console.log(`[Server] Reddit: Resposta inválida para "${tag}".`); return []; }
         const resultadosFiltrados = response.data.data.children
         .filter(post => post.data.ups >= 100)
-        .map(post => ({ fonte: 'reddit', tag, titulo: post.data.title, link: `https://reddit.com${post.data.permalink}`, upvotes: post.data.ups }));
+        .map(post => ({ fonte: 'reddit', tag, titulo: post.data.title, link: `https://reddit.com${post.data.permalink}`, upvotes: post.data.ups, dataPublicacao: post.data.created_utc }));
         console.log(`[Server] Reddit: Encontrados ${resultadosFiltrados.length} posts para "${tag}" (após filtro).`);
         return resultadosFiltrados;
     } catch (error) {
